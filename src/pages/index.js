@@ -1,22 +1,17 @@
-import { MongoClient } from 'mongodb';
+// import { MongoClient } from 'mongodb';
 import MeetupList from '../components/meetups/MeetupList';
+import { connectDatabase, getAllDocuments } from '../helpers/db-util';
 
 function HomePage(props) {
   return <MeetupList meetups={props.meetups} />;
 }
 
 export async function getStaticProps() {
-  // fetch data from an API
-  const client = await MongoClient.connect(
-    'mongodb+srv://meetupuser:RKbhVj8zhkbjivJy@cluster0.fzf8u3l.mongodb.net/meetups_db?retryWrites=true&w=majority'
-  );
-  const db = client.db();
+  
+  const client = await connectDatabase();
 
-  const meetupsCollection = db.collection('meetups');
-
-  const meetups = await meetupsCollection.find().toArray();
-
-  client.close();
+  const meetups = await getAllDocuments(client, 'meetups', {_id: -1 }, {});
+  //const meetups = await getAllDocuments(client, 'meetups', {_id: -1 }, {title : "vaasan tori!"});
 
   return {
     props: {

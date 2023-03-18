@@ -1,4 +1,5 @@
-import { MongoClient } from 'mongodb';
+//import { MongoClient } from 'mongodb';
+import { connectDatabase, insertDocument } from "../../helpers/db-util";
 
 // /api/new-meetup
 // POST /api/new-meetup
@@ -7,21 +8,26 @@ async function handler(req, res) {
     if (req.method === 'POST') {
         const data = req.body;
 
-        const client = await MongoClient.connect(
-            'mongodb+srv://meetupuser:RKbhVj8zhkbjivJy@cluster0.fzf8u3l.mongodb.net/meetups_db?retryWrites=true&w=majority'
-        );
+        // add data validation here
 
-        const db = client.db();
+        let client;
 
-        const meetupsCollection = db.collection('meetups');
+    try {
+        client = await connectDatabase();
+    }   catch (error) {
+        res.status(500).json({ message: 'Connecting to database failed!' })
+        return;
+    }
 
-        const result = await meetupsCollection.insertOne(data);
-
-        console.log(result);
-
+    try {
+        await insertDocument(client, 'meetups', data);
         client.close();
+    }   catch (error) {
+        res.status(500).json({ message: 'Inserting data failed!' });
+        return;
+    }
 
-        res.status(201).json({ message: 'Meetup inserted!' });
+    res.status(201).json({ message: 'Meetups inserted!' });
     }
 }
 
