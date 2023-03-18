@@ -24,4 +24,19 @@ export async function getAllDocuments(client, collection, sort, filter = {}) {
     return documents;
 }
 
+export async function getDocumentIdList(client, collection) {
+    const db = client.db();
+    const idList = await db.collection(collection).find({}, { _id: 1 }).toArray();
+
+    return idList;
+}
+
+export async function getOneDocument(client, collection, filter = {}) {
+    const db = client.db();
+
+    const document = await db.collection(collection).findOne(filter);
+
+    return document;
+}
+
 
