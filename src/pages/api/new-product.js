@@ -1,8 +1,4 @@
-//import { MongoClient } from 'mongodb';
 import { connectDatabase, insertDocument } from "../../helpers/db-util";
-
-// /api/new-meetup
-// POST /api/new-meetup
 
 async function handler(req, res) {
     if (req.method === 'POST') {
@@ -20,14 +16,14 @@ async function handler(req, res) {
     }
 
     try {
-        await insertDocument(client, 'meetups', data);
+        await insertDocument(client, 'products', data);
         client.close();
     }   catch (error) {
         res.status(500).json({ message: 'Inserting data failed!' });
         return;
     }
 
-    res.status(201).json({ message: 'Meetups inserted!' });
+    res.status(201).json({ message: 'Products inserted!' });
     }
 }
 
